@@ -32,5 +32,10 @@ goctl --version
 goctl env install
 ```
 
-### 使用
+
+## 目录组成
+
+（1）gozero_demo是根据官方文档的快速入门
+
+（2）mall是通过一个例子去熟悉api的调用
 

@@ -1,0 +1,7 @@
+Name: user-api
+Host: 0.0.0.0
+Port: 8888
+
+
+Mysql:
+  DataSource: root:root@tcp(172.23.80.1:3306)/mall
