@@ -4,4 +4,4 @@ Port: 8888
 
 
 Mysql:
-  DataSource: root:root@tcp(172.23.80.1:3306)/mall
+  DataSource: root:root@tcp(172.23.80.1:3306)/mall?parseTime=true

@@ -11,3 +11,7 @@ goctl model mysql datasource --url="root:root@tcp(127.0.0.1:3306)/mall" --table=
 
 goctl model mysql datasource --url="root:root@tcp(172.23.80.1:3306)/mall" --table="user" --dir="./model" --style="goZero"
 ```
+
+## 用户登录等操作----service\user
+(1). 注册操作
+参数校验-雪花算法加密-加盐密码-存入

@@ -2,7 +2,11 @@ module api
 
 go 1.25.0
 
-require github.com/zeromicro/go-zero v1.10.1
+require (
+	github.com/bwmarrin/snowflake v0.3.0
+	github.com/zeromicro/go-zero v1.10.1
+	golang.org/x/crypto v0.48.0
+)
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
