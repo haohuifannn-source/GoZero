@@ -1,7 +1,23 @@
 Name: user-api
-Host: 0.0.0.0
+Host: 127.0.0.1
 Port: 8888
 
+Auth:
+  AccessSecret: "夏天夏天悄悄过去"
+  AccessExpire: 86400        # Access Token 有效期：24 小时
+RefreshSecret: "冬天冬天悄悄来到"
+RefreshExpire: 604800        # Refresh Token 有效期：7 天
+
+Log: 
+  ServiceName: "user-srv"
+  Mode: file
+  Encoding: json
+  Level: info
+  Path: logs
+  stat: true
 
 Mysql:
   DataSource: root:root@tcp(172.23.80.1:3306)/mall?parseTime=true
+
+CacheRedis:
+  - Host: 172.23.80.1:6379

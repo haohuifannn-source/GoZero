@@ -8,6 +8,7 @@ info (
 	version: "1.0"
 )
 
+// 注册
 type SignupRequest {
 	Username   string `json:"username"`
 	Password   string `json:"password"`
@@ -19,11 +20,54 @@ type SignupResponse {
 	Message string `json:"message"`
 }
 
+// 登录
+type LoginRequest {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type LoginResponse {
+	Message      string `json:"message"`
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+	ExpiresIn    int    `json:"expiresIn"`
+}
+
+// 用户详情接口 ---> 传入userID, 返回接口详情信息（用户名和性别）
+type UserIDRequest {
+	Userid int64 `path:"userid"`
+}
+
+type UserMsgResponse {
+	Username string `json:"message"`
+	Gender   int    `json:"gender"`
+}
+
+// 自动刷新Token
+type RefreshReq {
+	RefreshToken string `json:"refreshToken"`
+}
+
 @server (
 	prefix: /api
 )
 service user-api {
 	@handler SignupHandler
 	post /user/signup (SignupRequest) returns (SignupResponse)
+
+	@handler LoginHandler
+	post /user/login (LoginRequest) returns (LoginResponse)
+
+	@handler RefreshToken
+	post /user/refresh (RefreshReq) returns (LoginResponse)
+}
+
+@server (
+	prefix: /api
+	jwt:    Auth
+)
+service user-api {
+	@handler GetUserDetailByIdHandler
+	get /user/info/:userid (UserIDRequest) returns (UserMsgResponse)
 }
 

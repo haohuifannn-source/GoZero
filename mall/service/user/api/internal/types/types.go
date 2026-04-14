@@ -3,6 +3,22 @@
 
 package types
 
+type LoginRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type LoginResponse struct {
+	Message      string `json:"message"`
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+	ExpiresIn    int    `json:"expiresIn"`
+}
+
+type RefreshReq struct {
+	RefreshToken string `json:"refreshToken"`
+}
+
 type SignupRequest struct {
 	Username   string `json:"username"`
 	Password   string `json:"password"`
@@ -12,4 +28,13 @@ type SignupRequest struct {
 
 type SignupResponse struct {
 	Message string `json:"message"`
+}
+
+type UserIDRequest struct {
+	Userid int64 `path:"userid"`
+}
+
+type UserMsgResponse struct {
+	Username string `json:"message"`
+	Gender   int    `json:"gender"`
 }

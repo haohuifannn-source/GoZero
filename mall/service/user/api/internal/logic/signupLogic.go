@@ -6,7 +6,6 @@ package logic
 import (
 	"context"
 	"errors"
-	"fmt"
 	"mall/service/user/model"
 
 	"api/internal/svc"
@@ -37,14 +36,18 @@ func (l *SignupLogic) Signup(req *types.SignupRequest) (resp *types.SignupRespon
 	if req.Password != req.RePassword {
 		return nil, errors.New("两次输入的密码不一致")
 	}
-	fmt.Printf("req : %#v\n", req)
+	logx.Infov(req) //json.Marshall(req)
+	logx.Infof("req:%#v\n", req)
 	// 把用户的注册信息保存到数据库中
 	// 0、 查询username是否已经被注册
 	//https://github.com/go-sql-driver/mysql一些关于数据库链接的参数
 	username := req.Username
 	u, err := l.svcCtx.UserModel.FindOneByUsername(l.ctx, username)
 	if err != nil && err != sqlx.ErrNotFound {
-		fmt.Printf("FindOneByUsername failed : %v\n", err)
+		logx.Errorw(
+			"FindOneByUsername failed",
+			logx.Field("err", err),
+		)
 		return nil, errors.New("内部错误")
 	}
 	if u != nil {
@@ -62,13 +65,19 @@ func (l *SignupLogic) Signup(req *types.SignupRequest) (resp *types.SignupRespon
 	// 2、加密密码（加盐|md5）
 	newpassword, err := utils.PasswordHash(user.Password)
 	if err != nil {
-		fmt.Printf("PasswordHash failed : %v\n", err)
+		logx.Errorw(
+			"PasswordHash failed",
+			logx.Field("err", err),
+		)
 		return nil, err
 	}
 	user.Password = newpassword
 
 	if _, err := l.svcCtx.UserModel.Insert(context.Background(), user); err != nil {
-		fmt.Printf("Insert failed : %v\n", err)
+		logx.Errorw(
+			"Insert failed",
+			logx.Field("err", err),
+		)
 		return nil, err
 	}
 	return &types.SignupResponse{Message: "sucess"}, nil

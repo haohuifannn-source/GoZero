@@ -1,0 +1,2 @@
+{"@timestamp":"2026-04-13T19:30:58.976+08:00","caller":"redis/durationhook.go:152","content":"[REDIS] slowcall on executing: hello 3","duration":"125.5ms","level":"slow","span":"c4b9c1c43c083da1","trace":"2f0b1fcfede74e17492862466f0b5253"}
+{"@timestamp":"2026-04-13T19:30:58.989+08:00","caller":"redis/durationhook.go:152","content":"[REDIS] slowcall on executing: get cache:mall:user:username:qimi","duration":"145.6ms","level":"slow","span":"a4fccc950ed0c042","trace":"2f0b1fcfede74e17492862466f0b5253"}
