@@ -17,6 +17,11 @@ goctl model mysql datasource --url="root:root@tcp(172.23.80.1:3306)/mall" --tabl
 goctl api go -api user.api -dir . -style=goZero
 ```
 
+## 链接云服务器进行开发
+(1). 配置文件中的 Host不需要改，保持 0.0.0.0 即可，让你的 user-api 程序监听你本地 WSL 所有的网卡地址
+(2). 把mysql、redis这些的网址改为服务器的公网网址
+(3). 用postman发请求的时候要用localhost
+
 ## 用户登录等操作----service\user
 (1). 注册操作
 参数校验-雪花算法加密-加盐密码-存入数据库和Redis-集成logx来记录日志
@@ -44,3 +49,52 @@ goctl api go -api user.api -dir . -style=goZero
 1. 路由中间件，即在.api文件中给理由加入中间件
 
 2. 全局中间件，及在middleware文件夹下自定义一个功能文件，如本项目中的global.go
+
+(6). 加入GRPC服务
+
+1. 定义一个.proto文件，定义相关的RPC协议，通过指令生成相关的代码
+```go
+goctl rpc protoc user.proto --go_out=./types --go-grpc_out=./types --zrpc_out=.
+```
+
+2. 完善配置结构体Config.go和配置文件yaml(一定要对应上)
+
+3. 完善serviceCtx
+
+4. 完善RPC的逻辑
+
+5. RPC测试工具：grpc ui （https://github.com/fullstorydev/grpcui）
+
+5.1 安装
+```go
+go install github.com/fullstorydev/grpcui/cmd/grpcui@latest
+```
+确保环境变量 $GOPATH/bin 目录，添加到环境变量里面
+
+5.2 使用
+其中`localhost:12345`是我rpc服务的地址
+```
+grpcui -plaintext localhost:12345
+```
+如果出现下面的情况
+```bash
+haohui@DESKTOP-PC8N4D7:~/projects/goZero/mall/service/user/api$ grpcui -plaintext localhost:8080
+Failed to compute set of methods to expose: server does not support the reflection API
+```
+
+5.4 如果出现数据库操作失败的时候，需要检查etcd的端口，要配置为以下的形式
+```bash
+docker run -d --name Etcd-server \
+    -p 2379:2379 \
+    -p 2380:2380 \
+    --env ALLOW_NONE_AUTHENTICATION=yes \
+    --env ETCD_ADVERTISE_CLIENT_URLS=http://117.72.109.40:2379 \ ---- 这里必须是公网的IP地址
+    --env ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379 \
+    bitnami/etcd:latest
+```
+
+5.3. 使用测试工具的时候，需要把Model定义为dev，因为默认是pro
+
+
+## 订单服务
+

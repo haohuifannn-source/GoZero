@@ -1,5 +1,5 @@
 Name: user-api
-Host: 127.0.0.1
+Host: 0.0.0.0
 Port: 8888
 
 Auth:
@@ -17,7 +17,7 @@ Log:
   stat: true
 
 Mysql:
-  DataSource: root:root@tcp(172.23.80.1:3306)/mall?parseTime=true
+  DataSource: root:root@tcp(117.72.109.40:3306)/mall?parseTime=true
 
 CacheRedis:
-  - Host: 172.23.80.1:6379
+  - Host: 117.72.109.40:6379

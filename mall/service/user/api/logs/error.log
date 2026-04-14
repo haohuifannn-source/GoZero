@@ -8,3 +8,4 @@
 {"@timestamp":"2026-04-14T14:19:06.304+08:00","caller":"logic/loginLogic.go:45","content":"Login find user failed","level":"error","username":"qimi"}
 {"@timestamp":"2026-04-14T14:19:27.691+08:00","caller":"logic/loginLogic.go:45","content":"Login find user failed","level":"error","username":"BYD"}
 {"@timestamp":"2026-04-14T14:19:47.888+08:00","caller":"logic/signupLogic.go:47","content":"FindOneByUsername failed","err":"NOAUTH Authentication required.","level":"error"}
+{"@timestamp":"2026-04-14T20:46:36.661+08:00","caller":"logic/loginLogic.go:41","content":"用户不存在，请注册","err":"sql: no rows in result set","level":"error"}
