@@ -38,3 +38,9 @@ goctl api go -api user.api -dir . -style=goZero
 3. refresh token（可选）
 
 一般来说生成AccessToken需要带有Role，因为在微服务之中可能会通过RPC进行传输，这时候需要检验该用户是admin还是user，从而在实现delete/Insert操作的时候不需要再次查询数据库。同时，RefreshToken是由前端主动发起，去捕获401来刷新，因此后端只需要实现接口即可。
+
+(5). 加入中间件
+
+1. 路由中间件，即在.api文件中给理由加入中间件
+
+2. 全局中间件，及在middleware文件夹下自定义一个功能文件，如本项目中的global.go

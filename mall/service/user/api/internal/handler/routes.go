@@ -34,13 +34,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodGet,
-				Path:    "/user/info/:userid",
-				Handler: GetUserDetailByIdHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Cost},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/user/info/:userid",
+					Handler: GetUserDetailByIdHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/api"),
 	)

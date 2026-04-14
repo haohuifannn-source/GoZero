@@ -63,8 +63,9 @@ service user-api {
 }
 
 @server (
-	prefix: /api
-	jwt:    Auth
+	prefix:     /api
+	jwt:        Auth
+	middleware: Cost //添加自定义的中间件（路由中间件）
 )
 service user-api {
 	@handler GetUserDetailByIdHandler

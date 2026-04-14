@@ -1,1 +1,10 @@
 {"@timestamp":"2026-04-13T21:36:53.011+08:00","caller":"handler/authhandler.go:103","content":"authorize failed: no token present in request\n=> GET /api/user/info/37050247280594944 HTTP/1.1\r\nHost: 127.0.0.1:8888\r\nAccept: */*\r\nAccept-Encoding: gzip, deflate, br\r\nConnection: keep-alive\r\nPostman-Token: 183aded9-5993-4508-905c-a1a6e765caa7\r\nUser-Agent: PostmanRuntime/7.53.0\r\n\r\n","level":"error","span":"5f41e76c576e39f5","trace":"d03c233f9c2b8ed305b87558a7de471a"}
+{"@timestamp":"2026-04-14T13:27:07.531+08:00","caller":"logic/getUserDetailByIdLogic.go:41","content":"UserModel.FindOneByUserId failed","level":"error","userID":37050247280594944}
+{"@timestamp":"2026-04-14T13:28:19.673+08:00","caller":"logic/getUserDetailByIdLogic.go:41","content":"UserModel.FindOneByUserId failed","level":"error","userID":37050247280594944}
+{"@timestamp":"2026-04-14T14:14:02.728+08:00","caller":"logic/getUserDetailByIdLogic.go:41","content":"UserModel.FindOneByUserId failed","level":"error","userID":37050247280594944}
+{"@timestamp":"2026-04-14T14:16:19.511+08:00","caller":"logic/getUserDetailByIdLogic.go:41","content":"UserModel.FindOneByUserId failed","level":"error","userID":37050247280594944}
+{"@timestamp":"2026-04-14T14:16:43.250+08:00","caller":"logic/loginLogic.go:45","content":"Login find user failed","level":"error","username":"qimi"}
+{"@timestamp":"2026-04-14T14:18:00.386+08:00","caller":"logic/loginLogic.go:45","content":"Login find user failed","level":"error","username":"qimi"}
+{"@timestamp":"2026-04-14T14:19:06.304+08:00","caller":"logic/loginLogic.go:45","content":"Login find user failed","level":"error","username":"qimi"}
+{"@timestamp":"2026-04-14T14:19:27.691+08:00","caller":"logic/loginLogic.go:45","content":"Login find user failed","level":"error","username":"BYD"}
+{"@timestamp":"2026-04-14T14:19:47.888+08:00","caller":"logic/signupLogic.go:47","content":"FindOneByUsername failed","err":"NOAUTH Authentication required.","level":"error"}

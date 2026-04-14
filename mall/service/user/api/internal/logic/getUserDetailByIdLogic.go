@@ -33,7 +33,7 @@ func (l *GetUserDetailByIdLogic) GetUserDetailById(req *types.UserIDRequest) (re
 	// 1、判断userID是否存在
 	uId := req.Userid
 	u, err := l.svcCtx.UserModel.FindOneByUserId(l.ctx, uId)
-	if err != nil && err != sqlx.ErrNotFound {
+	if err != nil {
 		if err == sqlx.ErrNotFound {
 			logx.Infow("userID not exit", logx.Field("userID", uId))
 			return nil, errors.New("内部错误")
