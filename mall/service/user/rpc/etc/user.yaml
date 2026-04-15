@@ -1,13 +1,17 @@
 Name: user.rpc
 Mode: dev
 ListenOn: 0.0.0.0:8080
-Etcd:
-  Hosts:
-  - 117.72.109.40:2379
-  Key: user.rpc
+# Etcd:
+#   Hosts:
+#   - 117.72.109.40:2379
+#   Key: user.rpc
 
 Mysql:
   DataSource: root:root@tcp(117.72.109.40:3306)/mall?charset=utf8mb4&parseTime=true
 
 CacheRedis:
   - Host: 117.72.109.40:6379
+
+Consul: 
+  Host: 117.72.109.40:8500
+  Key: consul-user.rpc

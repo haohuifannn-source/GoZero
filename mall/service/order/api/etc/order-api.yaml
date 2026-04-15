@@ -1,0 +1,24 @@
+Name: order-api
+Host: 0.0.0.0
+Port: 8889
+
+UserRpc:
+  # Etcd:
+  #   Hosts:
+  #     - 117.72.109.40:2379
+  #   Key: user.rpc
+  Target: consul://117.72.109.40:8500/consul-user.rpc?wait=14s
+
+Log: 
+  ServiceName: "order-srv"
+  Mode: file
+  Encoding: json
+  Level: info
+  Path: logs
+  stat: true
+
+Mysql:
+  DataSource: root:root@tcp(117.72.109.40:3306)/mall?parseTime=true
+
+CacheRedis:
+  - Host: 117.72.109.40:6379
