@@ -57,7 +57,7 @@ func myInterceptors(ctx context.Context, req any, info *grpc.UnaryServerInfo, ha
 	// 拦截器逻辑
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return nil, status.Errorf(codes.InvalidArgument, "need metadata")
+		return nil, status.Errorf(codes.InvalidArgument, "need metadata") // status是GRPC中专门返回错误的方式，带有GRPC状态码，不能用errors.New()
 	}
 	fmt.Printf("metadata %#v\n", md)
 	// 根据metadata中的数据进行一些校验处理
