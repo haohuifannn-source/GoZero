@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 
+	"mall/service/order/api/internal/interceptor"
 	"mall/service/order/api/internal/svc"
 	"mall/service/order/api/internal/types"
 	"mall/service/user/rpc/userclient"
@@ -42,7 +43,9 @@ func (l *SearchLogic) Search(req *types.SearchRequest) (resp *types.SearchRespon
 	// 	return nil, errors.New("内部错误")
 	// }
 	// 2. 调用rpc服务查询user的信息int64(o.UserId)
-	in := &userclient.GetUserReq{UserID: 37518068963872768}
+	// 在调用RPC前要把metadata存入上下文中
+	l.ctx = context.WithValue(l.ctx, interceptor.CtxKeyAdminID, "33")
+	in := &userclient.GetUserReq{UserID: 38255257658068992}
 	rpcRsp, err := l.svcCtx.UserRPC.GetUser(l.ctx, in)
 	if err != nil {
 		logx.Errorw("UserRPC.GetUser failed", logx.Field("err", err))

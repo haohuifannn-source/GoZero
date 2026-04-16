@@ -5,6 +5,7 @@ package svc
 
 import (
 	"mall/service/order/api/internal/config"
+	"mall/service/order/api/internal/interceptor"
 	"mall/service/order/model"
 	"mall/service/user/rpc/userclient"
 
@@ -23,6 +24,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:    c,
 		OrderMdel: model.NewOrderModel(conn, c.CacheRedis),
-		UserRPC:   userclient.NewUser(zrpc.MustNewClient(c.UserRPC)),
+		UserRPC:   userclient.NewUser(zrpc.MustNewClient(c.UserRPC, zrpc.WithUnaryClientInterceptor(interceptor.MyInterceptor))),
 	}
 }

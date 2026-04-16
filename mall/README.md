@@ -131,3 +131,77 @@ docker run -d --name Etcd-server \
   Target: consul://117.72.109.40:8500/consul-user.rpc?wait=14s
 2. 修改启动代码，引入_ "github.com/zeromicro/zero-contrib/zrpc/registry/consul"
 
+## 7. RPC调用传递metadata
+
+### 知识点
+1. 什么是metadata？什么样的数据应该存入metadata？它和请求参数有什么区别？
+
+元数据（metadata）是指在处理RPC请求和响应过程中需要但又不属于具体业务（例如身份验证详细信息）的信息，采用键值对列表的形式，其中键是string类型，值通常是[]string类型，但也可以是二进制数据。gRPC中的 metadata 类似于我们在 HTTP headers中的键值对，元数据可以包含认证token、请求标识和监控标签等。
+具体可以看https://www.liwenzhou.com/posts/Go/gRPC/#c-6-3
+
+2. GRPC拦截器：客户端的拦截器和服务端的拦截器的区别？
+
+gRPC 为在每个 ClientConn/Server 基础上实现和安装拦截器提供了一些简单的 API。 拦截器拦截每个 RPC 调用的执行。用户可以使用拦截器进行日志记录、身份验证/授权、指标收集以及许多其他可以跨 RPC 共享的功能。
+
+在 gRPC 中，拦截器根据拦截的 RPC 调用类型可以分为两类。第一个是普通拦截器（一元拦截器），它拦截普通RPC 调用。另一个是流拦截器，它处理流式 RPC 调用。而客户端和服务端都有自己的普通拦截器和流拦截器类型。因此，在 gRPC 中总共有四种不同类型的拦截器。
+具体可以看https://www.liwenzhou.com/posts/Go/gRPC/#c-6-3
+
+### 客户端拦截器
+
+order 服务的search接口中添加拦截器，添加一些userID、token、requestID等数据
+
+**几个关键点**：
+1.什么时候存入metadata
+
+在调用GRPC前需要存入
+
+2.怎么存
+
+通过l.ctx = context.WithValue(l.ctx, interceptor.CtxKeyAdminID, "33")存入
+
+3.拦截器如何通过context传值
+
+通过在拦截器中ctx = metadata.NewOutgoingContext(ctx, md) 将metadata随着RPC发送出去
+
+4.context存取值操作
+
+因为上面通过l.ctx = context.WithValue(l.ctx, interceptor.CtxKeyAdminID, "33")存入了上下文，因此可以通过adminID := ctx.Value(CtxKeyAdminID).(string)取出数据
+
+**注意**：在order的服务里面，用l.ctx = context.WithValue(l.ctx, "adminID", "33")传入一些元数据，这个是给自己的进程看的。和metadata.AppendToOutgoingContext不一样，这个是发到GRPC中给服务端进行调用的
+
+### 服务端拦截器
+1.拦截器怎么加？什么时候加？
+
+需要在启动RPC服务之前就添加，s.AddUnaryInterceptors(myInterceptors)
+
+2.拦截器的业务逻辑如何写？
+
+func myInterceptors(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
+	// 调用前
+	fmt.Println("服务端拦截器启动")
+
+	// 拦截器逻辑
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, status.Errorf(codes.InvalidArgument, "need metadata")
+	}
+	fmt.Printf("metadata %#v\n", md)
+	// 根据metadata中的数据进行一些校验处理
+	if md["token"][0] != "mall-order-test" {
+		return nil, status.Errorf(codes.Unauthenticated, "invalid token")
+	}
+	m, err := handler(ctx, req) // 实际的RPC方法调用
+
+	// 调用后
+	fmt.Println("服务端拦截器结束")
+	return m, err
+}
+
+（1）首先通过metadata.FromIncomingContext(ctx)取出相应的元数据
+（2）然后编写相关的拦截逻辑，通过md取出元数据进行验证
+（3）然后m, err := handler(ctx, req) 进行实际的RPC方法调用
+（4）最后返回
+
+3.服务端拦截器如何从metadata取值
+
+通过md, ok := metadata.FromIncomingContext(ctx)进行取值
