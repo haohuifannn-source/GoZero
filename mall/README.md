@@ -215,5 +215,13 @@ func myInterceptors(ctx context.Context, req any, info *grpc.UnaryServerInfo, ha
 ```
 
 1. 自定义错误结构体
+
+在errorx的文件夹下面，定义了相关的代码错误和RPC调用错误的结构体
+
 2. 业务逻辑代码中按需返回自定义的错误
+
+在响应返回错误的地方调用自定义的错误函数
+
 3. 告诉go-zero框架处理自定义错误
+
+需要实现效果，就需要在主函数里面调用框架提供的错误处理钩子函数去实现

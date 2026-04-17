@@ -2485,3 +2485,12 @@
 {"@timestamp":"2026-04-17T13:51:08.185+08:00","caller":"stat/usage.go:82","content":"CPU: 25m, MEMORY: Alloc=2.9Mi, TotalAlloc=10.2Mi, Sys=18.4Mi, NumGC=5","level":"stat"}
 {"@timestamp":"2026-04-17T13:51:08.202+08:00","caller":"load/sheddingstat.go:61","content":"(api) shedding_stat [1m], cpu: 25, total: 0, pass: 0, drop: 0","level":"stat"}
 {"@timestamp":"2026-04-17T13:51:10.565+08:00","caller":"stat/metrics.go:210","content":"(order-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms","level":"stat"}
+{"@timestamp":"2026-04-17T13:52:08.186+08:00","caller":"stat/usage.go:82","content":"CPU: 70m, MEMORY: Alloc=3.6Mi, TotalAlloc=13.0Mi, Sys=18.4Mi, NumGC=6","level":"stat"}
+{"@timestamp":"2026-04-17T13:52:08.202+08:00","caller":"load/sheddingstat.go:61","content":"(api) shedding_stat [1m], cpu: 70, total: 0, pass: 0, drop: 0","level":"stat"}
+{"@timestamp":"2026-04-17T13:52:10.564+08:00","caller":"stat/metrics.go:210","content":"(order-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms","level":"stat"}
+{"@timestamp":"2026-04-17T13:53:08.189+08:00","caller":"stat/usage.go:82","content":"CPU: 58m, MEMORY: Alloc=4.2Mi, TotalAlloc=15.7Mi, Sys=18.4Mi, NumGC=7","level":"stat"}
+{"@timestamp":"2026-04-17T13:53:08.202+08:00","caller":"load/sheddingstat.go:61","content":"(api) shedding_stat [1m], cpu: 58, total: 0, pass: 0, drop: 0","level":"stat"}
+{"@timestamp":"2026-04-17T13:53:10.567+08:00","caller":"stat/metrics.go:210","content":"(order-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms","level":"stat"}
+{"@timestamp":"2026-04-17T13:54:08.186+08:00","caller":"stat/usage.go:82","content":"CPU: 73m, MEMORY: Alloc=2.9Mi, TotalAlloc=18.8Mi, Sys=18.4Mi, NumGC=9","level":"stat"}
+{"@timestamp":"2026-04-17T13:54:08.201+08:00","caller":"load/sheddingstat.go:61","content":"(api) shedding_stat [1m], cpu: 73, total: 0, pass: 0, drop: 0","level":"stat"}
+{"@timestamp":"2026-04-17T13:54:10.564+08:00","caller":"stat/metrics.go:210","content":"(order-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms","level":"stat"}
