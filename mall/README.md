@@ -205,3 +205,15 @@ func myInterceptors(ctx context.Context, req any, info *grpc.UnaryServerInfo, ha
 3.服务端拦截器如何从metadata取值
 
 通过md, ok := metadata.FromIncomingContext(ctx)进行取值
+
+## 8. 错误处理
+```json
+{
+	"code": 1001,
+	"msg"： "内部错误"
+}
+```
+
+1. 自定义错误结构体
+2. 业务逻辑代码中按需返回自定义的错误
+3. 告诉go-zero框架处理自定义错误

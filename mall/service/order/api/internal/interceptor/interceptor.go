@@ -25,7 +25,7 @@ func MyInterceptor(ctx context.Context, method string, req, reply interface{}, c
 		"key1", "val1",
 		"key1", "val1-2", // "key1"的值将会是 []string{"val1", "val1-2"}
 		"requestID", "12345",
-		"token", "mall-order-test",
+		"token", "mall-order-test2",
 		"userID", adminID,
 	)
 	ctx = metadata.NewOutgoingContext(ctx, md)           // 将metadata随着RPC发送出去

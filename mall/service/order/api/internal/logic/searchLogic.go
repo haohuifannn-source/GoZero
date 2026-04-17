@@ -5,8 +5,8 @@ package logic
 
 import (
 	"context"
-	"errors"
 
+	"mall/service/order/api/internal/errorx"
 	"mall/service/order/api/internal/interceptor"
 	"mall/service/order/api/internal/svc"
 	"mall/service/order/api/internal/types"
@@ -49,7 +49,8 @@ func (l *SearchLogic) Search(req *types.SearchRequest) (resp *types.SearchRespon
 	rpcRsp, err := l.svcCtx.UserRPC.GetUser(l.ctx, in)
 	if err != nil {
 		logx.Errorw("UserRPC.GetUser failed", logx.Field("err", err))
-		return nil, errors.New("远程调用错误")
+		//return nil, errorx.NewDefaultCodeError("内部错误") ----直接返回默认错误
+		return nil, errorx.NewCodeError(errorx.RPCErrCode, "内部错误") // 返回自定义的状态码的错误
 	}
 
 	return &types.SearchResponse{
