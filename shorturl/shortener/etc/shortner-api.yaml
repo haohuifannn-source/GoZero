@@ -1,0 +1,10 @@
+Name: shortner-api
+Host: 0.0.0.0
+Port: 8888
+
+ShortUrlDB:
+  DSN: root:root@tcp(117.72.109.40:3306)/db1?parseTime=true
+
+Sequence:
+  DSN: root:root@tcp(117.72.109.40:3306)/db1?parseTime=true
+
