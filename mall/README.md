@@ -225,3 +225,62 @@ func myInterceptors(ctx context.Context, req any, info *grpc.UnaryServerInfo, ha
 3. 告诉go-zero框架处理自定义错误
 
 需要实现效果，就需要在主函数里面调用框架提供的错误处理钩子函数去实现
+
+## 9. 响应的扩展（进阶）
+
+很多情况下返回给前端的数据是以下的格式，带有状态码和返回的msg等，因此需要定义模板
+```json
+{
+  "code": 0,
+  "msg": "ok",
+  "data": {
+    ...
+  }
+}
+```
+
+模板的用处是用来生成代码的，是给goctl进行代码生成的时候可以根据模板生成
+
+```go
+goctl api go -api user.api -dir . -style=goZero
+```
+
+查看默认的存放模板文件的路径
+```bash
+goctl env
+```
+
+通过初始化模板文件得到模板
+```bash
+goctl template init
+```
+
+然后修改，例如下面下面修改handler文件
+
+```go
+package {{.PkgName}}
+
+import (
+        "net/http"
+        "mall/service/order/api/internal/response" // ***1. 加入了自定义的resonse文件***
+        "github.com/zeromicro/go-zero/rest/httpx"
+        {{.ImportPackages}}
+)
+
+{{if .HasDoc}}{{.Doc}}{{end}}
+func {{.HandlerName}}(svcCtx *svc.ServiceContext) http.HandlerFunc {
+        return func(w http.ResponseWriter, r *http.Request) {
+                {{if .HasRequest}}var req types.{{.RequestType}}
+                if err := httpx.Parse(r, &req); err != nil {
+                        httpx.ErrorCtx(r.Context(), w, err)
+                        return
+                }
+
+                {{end}}l := {{.LogicName}}.New{{.LogicType}}(r.Context(), svcCtx)
+                {{if .HasResp}}resp, {{end}}err := l.{{.Call}}({{if .HasRequest}}&req{{end}})
+                {{if .HasResp}}response.Response(w, resp, err){{else}}response.Response(w, nil, err){{end}}//***2. 将原本返回的格式改为自定的***
+        }
+}
+```
+
+然后重新goctl生成一下

@@ -4,12 +4,12 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"mall/service/order/api/internal/logic"
-	"mall/service/order/api/internal/response"
 	"mall/service/order/api/internal/svc"
 	"mall/service/order/api/internal/types"
-	"net/http"
 )
 
 func SearchHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
@@ -22,6 +22,10 @@ func SearchHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 
 		l := logic.NewSearchLogic(r.Context(), svcCtx)
 		resp, err := l.Search(&req)
-		response.Response(w, resp, err)
+		if err != nil {
+			httpx.ErrorCtx(r.Context(), w, err)
+		} else {
+			httpx.OkJsonCtx(r.Context(), w, resp)
+		}
 	}
 }
