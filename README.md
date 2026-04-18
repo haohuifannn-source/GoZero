@@ -39,3 +39,5 @@ goctl env install
 
 （2）mall是通过一个例子去熟悉api的调用
 
+（3）shorturl是一个短链接的项目
+
