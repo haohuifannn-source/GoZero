@@ -13,8 +13,20 @@ type Config struct {
 	Sequence struct {
 		DSN string
 	}
+
+	SequenceRedis SequenceRedis
+
+	BaseString string //指定base64的顺序
+
+	ShortUrlBlackList []string // 指定不能出现的路径词黑名单
+
+	ShortDomain string
 }
 
 type ShortUrlDB struct {
 	DSN string
+}
+
+type SequenceRedis struct {
+	Host string
 }

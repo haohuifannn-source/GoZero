@@ -8,3 +8,11 @@ ShortUrlDB:
 Sequence:
   DSN: root:root@tcp(117.72.109.40:3306)/db1?parseTime=true
 
+SequenceRedis: 
+  Host: 117.72.109.40:6379
+
+BaseString: KLM0149abcdefghijklmno78pqrst56uvwxyzABCDEFGHIJNOPQRS23TUVWXYZ
+
+ShortUrlBlackList: ["version", "fuck", "stupid", "convert", "health", "api", "css", "gss"]
+
+ShortDomain: q1mi.cn

@@ -10,6 +10,7 @@ import (
 	"shortener/internal/config"
 	"shortener/internal/handler"
 	"shortener/internal/svc"
+	"shortener/pkg/base62"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/rest"
@@ -22,6 +23,9 @@ func main() {
 
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
+
+	// base62初始化
+	base62.MustInit(c.BaseString)
 
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()

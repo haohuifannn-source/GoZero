@@ -85,8 +85,27 @@ import "github.com/go-playground/validator/v10"
 
 2. 取号
 
+***重点***: 这里面是通过创建一个sequence进行next函数的编写，这里面定义了一个sequence的空接口类型，是为了无论是mysql实现还是redis实现，只要实现了接口方法，就可以调用，不需要再svc里面多次初始化，只需要将其定义为sequence.Squence类型即可。
+
+这里实现了两种方法，mysql和reids。
+
 3. 号码转短链
+
+***注意***: 这里面通过创建base62实现了62进制的取号操作，这里的base62Str通过配置文件去指定，可以防止别人恶意请求去扒数据库，同时在主函数里面去初始化这个字符串。同时加入了黑名单等，防止转链后的路径具有非法的名称。黑名单的操作通过转换map的存储方法使得避免for循环的引入，同时采用map[stirng]struct{}的方式是因为空结构体不占用内存。
 
 4. 存储长链接和短链接的映射关系
 
 5. 返回响应
+
+3. 编写单元测试
+(1) 方法一：可以通过编译器自动生成单元测试，然后修改相关的代码，验证自己所实现的功能的正确性，该项目针对了urltool.go的代码正确性。
+
+（2）方法二：通过goconvey方法https://liwenzhou.com/posts/go/unit-test-5/
+```bash
+go install github.com/smartystreets/goconvey@latest
+```
+
+然后编写即可，如connect_test.go所示，然后可以通过命令运行所有的测试
+```bash
+go test ./...
+```

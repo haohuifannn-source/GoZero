@@ -11,6 +11,8 @@ import (
 
 	"shortener/internal/svc"
 	"shortener/internal/types"
+	"shortener/model"
+	"shortener/pkg/base62"
 	"shortener/pkg/connect"
 	"shortener/pkg/md5"
 	"shortener/pkg/urltool"
@@ -69,9 +71,53 @@ func (l *ConvertLogic) Convert(req *types.ConvertRequest) (resp *types.ConvertRe
 		logx.Errorw("FindOneBySurl failed", logx.Field("err", err))
 		return nil, errors.New("内部错误")
 	}
-	// 2. 取号
-	// 3. 号码转短链
+
+	var short string
+	// 为了一直防止生成敏感的路径名称
+	for {
+		// 2. 取号 ---基于MYSQL实现的发号器
+		// 每来一个转链请求，我们就使用replace into 语句往 sequence 表插入一条数据，并取出其中的主键作为号码
+		// 基于MySQL实现
+		seq, err := l.svcCtx.SquenceModel.Next()
+		if err != nil {
+			logx.Errorw("l.svcCtx.SquenceModel.Next() failed", logx.LogField{Key: "err", Value: err.Error()})
+			return nil, errors.New("内部错误")
+		}
+		fmt.Printf("------>Mysqlreq : %v\n", seq)
+
+		// 基于Redis实现
+		// redisSeq, err := l.svcCtx.SquenceRedis.Next()
+		// if err != nil {
+		// 	logx.Errorw("l.svcCtx.SquenceRedis.Next() failed", logx.LogField{Key: "err", Value: err.Error()})
+		// 	return nil, errors.New("内部错误")
+		// }
+		// fmt.Printf("------>Redisreq : %v\n", redisSeq)
+
+		// 3. 号码转短链
+		// 3.1 安全性  1En = 6347， 别人可以一直遍历，把你的逻辑扒出来，就是可以知道你的0-62用什么表示
+		// 3.2 短域名黑名单避免某些特殊词，比如api\health\fuck
+		short = base62.Int2String(seq)
+		if _, ok := l.svcCtx.ShortUrlBlackList[short]; !ok {
+			break // 生成不在黑名单的短链接直接跳出for循环
+		}
+
+	}
+	fmt.Printf("-----> short : %v\n", short)
+
 	// 4. 存储长链接和短链接的映射关系
+	if _, err := l.svcCtx.ShortUrlModel.Insert(
+		l.ctx,
+		&model.ShortUrlMap{
+			Lurl: sql.NullString{String: req.LongURL, Valid: true},
+			Md5:  sql.NullString{String: md5Value, Valid: true},
+			Surl: sql.NullString{String: short, Valid: true},
+		},
+	); err != nil {
+		logx.Errorw("l.svcCtx.ShortUrlModel.Insert failed", logx.LogField{Key: "err", Value: err.Error()})
+		return nil, err
+	}
 	// 5. 返回响应
-	return
+	// 5.1 返回的是短域名+短链接
+	shortUrl := l.svcCtx.Config.ShortDomain + "/" + short
+	return &types.ConvertResponse{ShortURL: shortUrl}, nil
 }
