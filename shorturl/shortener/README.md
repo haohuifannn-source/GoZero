@@ -109,3 +109,109 @@ go install github.com/smartystreets/goconvey@latest
 ```bash
 go test ./...
 ```
+
+## 实现查看短链的功能
+
+(1) 通过数据库查询短链对应的长链
+
+(2) 为了实现重定向，需要去handler层实现重定向
+
+(3) 为了实现功能的高可用性，查数据库之前必须加缓存，防止大规模的查询数据库，有两种方式
+1. 自己写缓存，就是可以是按surl -->  lurl
+2. go-zero生成的缓存，就是 surl ---> 数据行，即将模型的结构的数据全部缓存， 会增加缓存的压力
+
+为了方便，这里用第二种方式：
+1. 添加缓存的配置.yaml和config结构体都需要改
+2. 删除旧的model层代码，删除shorturlmapmodel.go文件，需要改哪个就删那个
+3. 重新生成model层代码
+```bash
+goctl model mysql datasource -url="root:root@tcp(117.72.109.40:3306)/db1" --table="short_url_map" --dir="./model" --style="goZero" -c
+```
+
+第一种也实现了：
+1. 首先修改配置文件和conf文件，加入redis的相关配置
+2. 修改svc文件，加入redis
+3. 在logic除调用，主要逻辑是首先去查redis，查到了返回结果；查不到就去查数据库，然后同步设置redis
+
+4. 修改svc代码
+
+(4) 使用Redis会存在几个问题
+1. 缓存如何设置，LRU
+2. 缓存击穿：缓存过期了，大量的请求同一时间穿透去查数据库
+- 使⽤singleflight 合并请求：https://www.liwenzhou.com/posts/Go/singleflight/
+- go-zero本身就支持singleflight，带有缓存的model生成的时候就带有这个
+
+```go
+//svc文件
+// internal/svc/servicecontext.go
+import (
+    "github.com/zeromicro/go-zero/core/syncx" // 引入 syncx
+)
+
+type ServiceContext struct {
+    // ... 其他字段
+    SingleGroup syncx.SingleFlight // 添加这个字段
+}
+
+func NewServiceContext(c config.Config) *ServiceContext {
+    return &ServiceContext{
+        // ...
+        SingleGroup: syncx.NewSingleFlight(), // 初始化
+    }
+}
+
+// 防止缓存击穿的手动实现版
+// 缓存击穿一定是发生在缓存查不到的情况下，因为一开始肯定是先要去查，再做缓存击穿防御
+// 如果不想用dochan版本，只需要把select和dochan改为do即可
+func (l *ShowLogic) Show(req *types.ShowRequest) (resp *types.ShowResponse, err error) {
+    // 1. 构造 Redis Key
+    redisKey := fmt.Sprintf("%s%s", reidisDb1ShortUrlMapSurlPrefix, req.ShortURL)
+
+    // 2. 第一层：尝试从手动缓存读取
+    s, _ := l.svcCtx.BizRedis.Get(redisKey)
+    if len(s) > 0 {
+        return &types.ShowResponse{LongURL: s}, nil
+    }
+
+    // 3. 第二层：使用 DoChan 进行异步归并
+    // 注意：DoChan 不会阻塞，它会立刻返回一个 channel
+    resultChan := l.svcCtx.SingleGroup.DoChan(req.ShortURL, func() (any, error) {
+        // --- 依然只有一个人会进来 ---
+        u, err := l.svcCtx.ShortUrlModel.FindOneBySurl(
+            l.ctx, 
+            sql.NullString{String: req.ShortURL, Valid: true},
+        )
+        if err != nil {
+            return nil, err
+        }
+
+        // 回填缓存
+        _ = l.svcCtx.BizRedis.Setex(redisKey, u.Lurl.String, 86400)
+        return u.Lurl.String, nil
+    })
+
+    // 4. 使用 select 监听结果或超时
+    select {
+    case <-l.ctx.Done():
+        // 情况 A：如果在数据库返回前，客户端断开了连接或请求超时了
+        return nil, l.ctx.Err()
+
+    case res := <-resultChan:
+        // 情况 B：数据库返回了结果
+        if res.Err != nil {
+            if res.Err == sqlx.ErrNotFound {
+                return nil, errors.New("404")
+            }
+            return nil, res.Err
+        }
+        
+        // res.Val 是 any 类型，断言为 string
+        return &types.ShowResponse{LongURL: res.Val.(string)}, nil
+    }
+}
+```
+
+3. 缓存穿透：根本就没有这个链接的缓存，而且数据库也没有，因此也会大量请求并发的查询数据库
+
+
+***注意***： 在convert中通过拼接得到q1mi.cn/L，其实q1mi.cn是个人购买的域名，在本地开发中就相当于127.0.0.1:8888，因为是只需要在网址输入localhost:8888/L就可以去实现功能的校验

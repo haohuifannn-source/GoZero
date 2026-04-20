@@ -16,3 +16,13 @@ BaseString: KLM0149abcdefghijklmno78pqrst56uvwxyzABCDEFGHIJNOPQRS23TUVWXYZ
 ShortUrlBlackList: ["version", "fuck", "stupid", "convert", "health", "api", "css", "gss"]
 
 ShortDomain: q1mi.cn
+
+CaCheRedis:
+  - Host: 117.72.109.40:6379
+
+
+# 手动实现redis
+BizRedis:
+  Host: 117.72.109.40:6379
+  Pass: ""
+  Type: node # 如果是单机就填 node，集群填 cluster

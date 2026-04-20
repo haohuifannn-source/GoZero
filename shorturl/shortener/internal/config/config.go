@@ -3,7 +3,11 @@
 
 package config
 
-import "github.com/zeromicro/go-zero/rest"
+import (
+	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/redis"
+	"github.com/zeromicro/go-zero/rest"
+)
 
 type Config struct {
 	rest.RestConf
@@ -21,6 +25,11 @@ type Config struct {
 	ShortUrlBlackList []string // 指定不能出现的路径词黑名单
 
 	ShortDomain string
+
+	CaCheRedis cache.CacheConf
+
+	// 手动实现redis
+	BizRedis redis.RedisConf // 专门给业务逻辑用的 Redis 配置
 }
 
 type ShortUrlDB struct {

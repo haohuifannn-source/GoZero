@@ -4,6 +4,7 @@ go 1.26.2
 
 require (
 	github.com/go-playground/validator/v10 v10.30.2
+	github.com/redis/go-redis/v9 v9.18.0
 	github.com/smartystreets/goconvey v1.8.1
 	github.com/zeromicro/go-zero v1.10.1
 )
@@ -39,7 +40,6 @@ require (
 	github.com/prometheus/client_model v0.6.2 // indirect
 	github.com/prometheus/common v0.66.1 // indirect
 	github.com/prometheus/procfs v0.16.1 // indirect
-	github.com/redis/go-redis/v9 v9.18.0 // indirect
 	github.com/smarty/assertions v1.15.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/titanous/json5 v1.0.0 // indirect
