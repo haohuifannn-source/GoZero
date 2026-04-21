@@ -116,6 +116,18 @@ func (l *ConvertLogic) Convert(req *types.ConvertRequest) (resp *types.ConvertRe
 		logx.Errorw("l.svcCtx.ShortUrlModel.Insert failed", logx.LogField{Key: "err", Value: err.Error()})
 		return nil, err
 	}
+	// 将生成的短链接加载到布隆过滤器中
+	if err := l.svcCtx.FilterBloom.Add([]byte(short)); err != nil {
+		logx.Errorw("l.svcCtx.FilterBloom.Add failed", logx.LogField{Key: "err", Value: err.Error()})
+		//生产建议：如果布隆过滤器报错（比如 Redis 挂了），为了业务可用性，通常选择“放行”而不是报错
+	}
+
+	// 布谷鸟过滤器
+	// if err := l.svcCtx.BooGuFilter.InsertUnique([]byte(short)); err != false {
+	// 	logx.Errorw("l.svcCtx.BooGuFilter.InsertUnique", logx.LogField{Key: "err", Value: "not exit"})
+	// 	//生产建议：如果布隆过滤器报错（比如 Redis 挂了），为了业务可用性，通常选择“放行”而不是报错
+	// }
+
 	// 5. 返回响应
 	// 5.1 返回的是短域名+短链接
 	shortUrl := l.svcCtx.Config.ShortDomain + "/" + short

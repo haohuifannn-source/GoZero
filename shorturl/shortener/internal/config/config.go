@@ -30,6 +30,7 @@ type Config struct {
 
 	// 手动实现redis
 	BizRedis redis.RedisConf // 专门给业务逻辑用的 Redis 配置
+
 }
 
 type ShortUrlDB struct {
